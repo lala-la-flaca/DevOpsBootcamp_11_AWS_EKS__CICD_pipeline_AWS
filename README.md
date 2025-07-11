@@ -65,7 +65,7 @@ Build a CI/CD pipeline that:
    ```bash
    aws ecr get-login-password --region us-east-2 
    ```
-   <img src=""https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/1%20get%20ecr%20password.png width=800 />
+   <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/1%20get%20ecr%20password.png" width=800 />
    
 6. The username is AWS
 7. Go to Jenkins and click  Manage Jenkins
