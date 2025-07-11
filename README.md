@@ -57,37 +57,38 @@ Build a CI/CD pipeline that:
 
 <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/1%20create%20a%20new%20ecr%20repository%20for%20the%20app.PNG" width=800 />
 
-### Creating Jenkins Credentials for ECR
-1. Go to the newly created repository
-2. Click Push commands for java-maven-app
-3. Get the login and password.
-5. Execute on your command line to obtain the password of the ECR repository
+### Creating Jenkins Credentials for Amazon ECR
+
+1. Open your newly created Amazon ECR repository.
+2. Click Push commands for the java-maven-app repository.
+3. Copy the authentication command to obtain the ECR password:
    ```bash
    aws ecr get-login-password --region us-east-2 
    ```
    <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/1%20get%20ecr%20password.png" width=800 />
    
 6. The username is AWS
-7. Go to Jenkins and click  Manage Jenkins
-8. Select Credentials
-9. Create Global credentials
-   Kind: Username with password
-   Scope: Global
-   Username: AWS
-   ID: ecr-credentials
-   password: *<ECR password>*
+7. Open Jenkins and go to Manage Jenkins.
+8. Select Credentials from the menu.
+9. Under (global) scope, click Add Credentials.
+10. In the credentials form, configure the following: 
+   * Kind: Username with password
+   * Scope: Global
+   * Username: AWS
+   * ID: ecr-credentials
+   * password: pasted password obtained in step 3
 
    <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/2%20adding%20ecr%20credentials%20to%20jenkins.png" width=800 />
    
-11. Click Create
+11. Click Create to save the credentials.
 
 ### Creating a Secret for AWS ECR
-1. Ensure your EKS cluster is running.
+1. Verify that your EKS cluster is running:
    ```bash
    kubectl get nodes
    ```
    
-2. Create Secret
+2. Create a Docker registry secret for AWS ECR:
    ```bash
      kubectl create secret docker-registry aws-registry-key \
      --docker-server=734066168422.dkr.ecr.us-east-2.amazonaws.com \
@@ -96,16 +97,16 @@ Build a CI/CD pipeline that:
    ```
    <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/3%20creating%20aws%20secret.png" width=800 />
    
-3. Verify that the secret was created
+3. Confirm that the secret was created:
    ```bash
      kubectl get secret
    ```
-4. The secret is going to be used in the deployment configuration file to fetch the image.
+4. Use this secret in your Kubernetes deployment manifest to pull the image from ECR.
     
 ### Updating the Deployment YAML file
 1. In your Java-Maven-App repository (forked from the previous demo6), create a new feature branch.
    
-2. In deployment.yaml, update the imagePullSecret to use the AWS registry
+2. Open the deployment.yaml file and update the imagePullSecrets section to use the AWS ECR secret:
    ```bash
           spec:
             imagePullSecrets:
@@ -113,7 +114,7 @@ Build a CI/CD pipeline that:
    ```
 
 ### Updating Jenkinsfile
-1. In the build stage, update the Jenkinsfile to use the ECR credentials
+1. Update the build stage in the Jenkinsfile to use ECR credentials:
    ```bash
       stage("build image") {
                steps {
@@ -128,7 +129,7 @@ Build a CI/CD pipeline that:
                }
             }
    ```
-2. Set the New repository on the Docker build command and extract the hardcoded string to an ENV variable named $DOCKER_REPO and add the server of the repository using the $DOCKER_REPO_SERVER 
+2. Replace hardcoded values with environment variables for the Docker repository and ECR server:
 
    ```bash
         stage("build image") {
@@ -149,7 +150,7 @@ Build a CI/CD pipeline that:
    ```
    <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/2%20updating%20the%20build%20section%20with%20ecr%20credentials%20and%20repo.PNG" width=800 />
    
-4. Update the environment variables section of the Jenkinsfile:
+4. Update the environment block in the Jenkinsfile to define repository-related variables:
    ```bash
          environment {
               KUBECONFIG = "${env.WORKSPACE}/kubeconfig"
@@ -162,7 +163,7 @@ Build a CI/CD pipeline that:
    ```
    <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/4%20splitting%20docker%20server%20and%20repo.PNG" width=800 />
    
-5. Update the deployment.yaml to access the repository's environment variable.
+5. Update the deployment.yaml file to reference the environment variables:
    ```bash
          apiVersion: apps/v1
          kind: Deployment
@@ -192,19 +193,19 @@ Build a CI/CD pipeline that:
 
    <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/3%20updating%20deployment%20with%20ecr%20repo.PNG" width=800 />
 
-10. Commit changes
+10. Commit your changes to the repository.
     
-12. Execute the pipeline
+12. Run the Jenkins pipeline.
     
     <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/5%20pipeline%20ok%20with%20ECR.PNG" width=800 />
     
-14. Check that the pod is running
+14. Verify that the pod is running in your cluster:
     
     ```bash
     kubectl get pods
     ```
     <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/5%20pod%20running%20with%20image%20from%20ECR.png" width=800 />
     
-16. Check the repository
-    
-   <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/6%20image%20available%20in%20ECR.PNG" width=800 />
+16. Confirm the Docker image is available in your ECR repository
+
+    <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/6%20image%20available%20in%20ECR.PNG" width=800 />
