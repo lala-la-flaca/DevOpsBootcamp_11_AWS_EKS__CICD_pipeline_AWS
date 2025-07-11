@@ -29,7 +29,11 @@ Build a CI/CD pipeline that:
 - The EKS cluster from the previous demo is running.
   
 ## 🎯 Features
-- Create k8 manifest files for Deployment and Service configuration.
+- Create ECR repository
+- Create ECR Credentials in Jenkins
+- Adjust Building and Tagging
+- Crete Secret for ECR
+- Update Jenkinsfile
 - Update the deploy step in the CI/CD to deploy the newly built application image from DockerHub to EKS cluster.
 - Complete CI/CD pipeline:
   - CI step: Increment version
@@ -43,20 +47,16 @@ Build a CI/CD pipeline that:
 
 
 ## ⚙️ Project Configuration
-### Creating Deployment and Service YAML files
-1. In your java-maven-app repository (forked from the Java Increment Version Demo), create a new feature branch.
-   
-2. Create a new directory named kubernetes.
-   
-3. In the kubernetes directory, create two files:
-   *  deployment.yaml
-   *  service.yaml
+### Creating ECR Repository
+1. Go to yout AWS Console
+2. Go to ECR
+3. Create a New Private Repository
+4.  
 
-   <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_DockerHub/blob/main/Img/1%20create%20a%20new%20kubernetes%20folder%20and%20deployment%20and%20servicel%20yaml.png" width=800 />
+### Updating Deployment and Service YAML files
+1. In your java-maven-app repository (forked from the previous demo6), create a new feature branch.
    
-4. Copy the baseline configurations into both files.
-   
-5. In deployment.yaml, update the configuration to use dynamic environment variables for the image name and app name:
+5. In deployment.yaml, update the configuration to use dynamic environment variables for the repo, image name, and app name:
    ```bash
       apiVersion: apps/v1
       kind: Deployment
@@ -78,38 +78,25 @@ Build a CI/CD pipeline that:
               - name: aws-registry-key
             containers:
               - name: $APP_NAME
-                image: lala011/demo-app:$IMAGE_NAME
+                image: $DOCKER_REPO:$IMAGE_NAME
                 imagePullPolicy: Always
                 ports:
                   - containerPort: 8080
    ```
-   <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_DockerHub/blob/main/Img/2%20setting%20a%20dynamic%20container%20image.png" width=800 />
-   
-8. In service.yaml, replace static values with the $APP_NAME environment variable:
-   ```bash
-       apiVersion: v1
-       kind: Service
-       metadata:
-         name: $APP_NAME
-       spec:
-         selector:
-           app: $APP_NAME
-         ports:
-           - protocol: TCP
-             port: 80
-             targetPort: 8080
-   ```
-   <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_DockerHub/blob/main/Img/3%20Replacing%20labels%20and%20app%20name%20with%20ENV.png" width=800 />
-   
+   <img src="" width=800 />
+    
 9. In your Jenkinsfile, add the following environment variables under the environment block:
    ```bash
-      environment {
-          KUBECONFIG = "${env.WORKSPACE}/kubeconfig"
-          AWS_REGION = 'us-east-2'
-          CLUSTER_NAME = 'demo-cluster'
-          APP_NAME = 'java-maven-app'
-  
-      }
+       environment {
+        KUBECONFIG = "${env.WORKSPACE}/kubeconfig"
+        AWS_REGION = 'us-east-2'
+        CLUSTER_NAME = 'demo-cluster'
+        APP_NAME = 'java-maven-app'
+        DOCKER_REPO_SERVER = '734066168422.dkr.ecr.us-east-2.amazonaws.com'
+        DOCKER_REPO = "${DOCKER_REPO_SERVER}/java-maven-app"
+
+    }
+
    ```
    <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_DockerHub/blob/main/Img/4%20defining%20app%20name%20as%20env.png" width=800 />
    
@@ -154,30 +141,9 @@ Build a CI/CD pipeline that:
 ```
 <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_DockerHub/blob/main/Img/5%20passing%20the%20deployment%20file%20and%20srvice%20to%20pipeline.png" width=800 />
 
-### Installing Gettext-base on Jenkins
-1. SSH into the Jenkins server (hosted on your DigitalOcean droplet):
-   ```bash
-      ssh root@198.199.70.18
-   ```
-   <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_DockerHub/blob/main/Img/6%20ssh%20to%20jenkins.png" width=800 />
-   
-3. Access to the Jenkins container as the root user.
-   ```bash
-      docker exec -u 0 -it 6db6fdd7ed8f bash
-   ```
-   <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_DockerHub/blob/main/Img/7%20entering%20jenkins%20ocntainer%20as%20root.png" width=800/>
-   
-5. Install gettext-base
-   ```bash
-     apt-get update
-     apt-get install gettext-base
-   ```
-   <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_DockerHub/blob/main/Img/8%20installing%20gettext-base%20envsubst.png" width=800 />
-   
-6. Exit the container
 
 ### Creating a Secret for DockerHub
-In this demo, the Docker Hub secret is created manually from the host machine and is not included in the pipeline. You must create the secret once for each namespace where it is needed.
+In this demo, the ECR secret is created manually from the host machine and is not included in the pipeline. You must create the secret once for each namespace where it is needed.
 
 1. Ensure your EKS cluster is running.
    ```bash
