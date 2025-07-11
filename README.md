@@ -78,6 +78,7 @@ Build a CI/CD pipeline that:
    password: *<ECR password>*
 
    <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/2%20adding%20ecr%20credentials%20to%20jenkins.png" width=800 />
+   
 11. Click Create
 
 ### Creating a Secret for AWS ECR
@@ -85,7 +86,6 @@ Build a CI/CD pipeline that:
    ```bash
    kubectl get nodes
    ```
-   <img src="" width=800 />
    
 2. Create Secret
    ```bash
@@ -111,7 +111,6 @@ Build a CI/CD pipeline that:
             imagePullSecrets:
               - name: aws-registry-key
    ```
-   <img src="" width=800 />
 
 ### Updating Jenkinsfile
 1. In the build stage, update the Jenkinsfile to use the ECR credentials
@@ -130,6 +129,7 @@ Build a CI/CD pipeline that:
             }
    ```
 2. Set the New repository on the Docker build command and extract the hardcoded string to an ENV variable named $DOCKER_REPO and add the server of the repository using the $DOCKER_REPO_SERVER 
+
    ```bash
         stage("build image") {
                   steps {
@@ -149,7 +149,7 @@ Build a CI/CD pipeline that:
    ```
    <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/2%20updating%20the%20build%20section%20with%20ecr%20credentials%20and%20repo.PNG" width=800 />
    
-3. Update the environment variables section of the Jenkinsfile:
+4. Update the environment variables section of the Jenkinsfile:
    ```bash
          environment {
               KUBECONFIG = "${env.WORKSPACE}/kubeconfig"
@@ -162,7 +162,7 @@ Build a CI/CD pipeline that:
    ```
    <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/4%20splitting%20docker%20server%20and%20repo.PNG" width=800 />
    
-4. Update the deployment.yaml to access the repository's environment variable.
+5. Update the deployment.yaml to access the repository's environment variable.
    ```bash
          apiVersion: apps/v1
          kind: Deployment
@@ -193,15 +193,18 @@ Build a CI/CD pipeline that:
    <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/3%20updating%20deployment%20with%20ecr%20repo.PNG" width=800 />
 
 10. Commit changes
-11. Execute the pipeline
+    
+12. Execute the pipeline
+    
     <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/5%20pipeline%20ok%20with%20ECR.PNG" width=800 />
     
-13. Check that the pod is running
+14. Check that the pod is running
+    
     ```bash
     kubectl get pods
     ```
     <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/5%20pod%20running%20with%20image%20from%20ECR.png" width=800 />
     
-14. Check the repository
+16. Check the repository
     
    <imr src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/6%20image%20available%20in%20ECR.PNG" width=800 />
