@@ -57,7 +57,7 @@ Build a CI/CD pipeline that:
 
 <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/1%20create%20a%20new%20ecr%20repository%20for%20the%20app.PNG" width=800 />
 
-### Creating Username and Password for the ECR
+### Creating Jenkins Credentials for ECR
 1. Go to the newly created repository
 2. Click Push commands for java-maven-app
 3. Get the login and password.
