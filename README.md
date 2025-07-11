@@ -207,4 +207,4 @@ Build a CI/CD pipeline that:
     
 16. Check the repository
     
-   <imr src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/6%20image%20available%20in%20ECR.PNG" width=800 />
+   <img src="https://github.com/lala-la-flaca/DevOpsBootcamp_11_AWS_EKS__CICD_pipeline_AWS/blob/main/Img/6%20image%20available%20in%20ECR.PNG" width=800 />
