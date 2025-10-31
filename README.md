@@ -2,7 +2,7 @@
 ## 📦 Demo 7
 This project is part of **Module 11: Kubernetes on AWS (EKS)** in the **TWN DevOps Bootcamp**.It shows how to set up a **complete CI/CD pipeline** that builds, pushes, and deploys an application container to an **Amazon EKS cluster** using images stored in **Amazon ECR**, using **Jenkins**.
 **
-#The Demo Files: [GitLab Repo](https://gitlab.com/devopsbootcamp4095512/devopsbootcamp_8_jenkins_pipeline/-/tree/complete_pipeline_EKS_ECR/java-maven-app?ref_type=heads)
+# The Demo Files: [GitLab Repo](https://gitlab.com/devopsbootcamp4095512/devopsbootcamp_8_jenkins_pipeline/-/tree/complete_pipeline_EKS_ECR/java-maven-app?ref_type=heads)
 
 ## 📌 Objective
 Build a CI/CD pipeline that:
